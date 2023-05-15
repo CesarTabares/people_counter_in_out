@@ -14,7 +14,7 @@ class VideoProcessor:
     OBJECTS_OF_INTERESTS = ["person"]
     CONFIDENCE_LEVEL = 0.3
 
-    def __init__(self, location: LocationBase, publisher, debug: bool = True):
+    def __init__(self, location: LocationBase, publisher, debug: bool = False):
         self.location = location
         self.publisher = publisher
         self.model = YOLO("yolo_model/weights/yolov8m.pt")
