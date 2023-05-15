@@ -2,3 +2,4 @@ walking_people.mp4
 .idea
 __pycache__/
 /src/yolo_model/weights/*
+/src/__pycache__/*
