@@ -1,4 +1,4 @@
 walking_people.mp4
-yolo_model/weights
 .idea
 __pycache__/
+/src/yolo_model/weights/*
