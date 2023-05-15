@@ -111,12 +111,12 @@ class VideoProcessor:
             if self.location.LIMITS_IN[0].x < cx < self.location.LIMITS_IN[1].x and self.location.LIMITS_IN[0].y - 15 < cy < self.location.LIMITS_IN[1].y + 15:
                 self.count_in += 1
                 self.counted_ids.append(id_)
-                # del self.objects_data[id_]
+                del self.objects_data[id_]
         elif object_data_direction == "out":
             if self.location.LIMITS_OUT[0].x < cx < self.location.LIMITS_OUT[1].x and self.location.LIMITS_OUT[0].y - 15 < cy < self.location.LIMITS_OUT[1].y + 15:
                 self.count_out += 1
                 self.counted_ids.append(id_)
-                # del self.objects_data[id_]
+                del self.objects_data[id_]
 
     def show_and_draw(self, frame):
         cv2.rectangle(frame, (self.location.MASK_P1.x, self.location.MASK_P1.y), (self.location.MASK_P2.x, self.location.MASK_P2.y), (255, 0, 255), thickness=2)
