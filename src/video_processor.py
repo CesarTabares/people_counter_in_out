@@ -21,6 +21,7 @@ class VideoProcessor:
         self.tracker = Sort(max_age=20, min_hits=3, iou_threshold=0.3)
         self.debug = debug
         self.objects_data = {}
+        self.counted_ids = []
         self.count_in = 0
         self.count_out = 0
 
@@ -49,9 +50,6 @@ class VideoProcessor:
 
     def get_frame_region(self, frame):
         frame_region = cv2.bitwise_and(frame, frame, mask=self.location.mask)
-        if self.debug:
-            cv2.imshow("FrameRegion", frame_region)
-
         return frame_region
 
     @staticmethod
@@ -76,14 +74,15 @@ class VideoProcessor:
             w, h = x2 - x1, y2 - y1
             cx, cy = x1 + w // 2, y1 + h // 2
 
-            object_data = self.set_object_data(id_, cy)
-            self.decide_object_count(object_data, cx, cy)
+            if id_ not in self.counted_ids:
+                object_data = self.set_object_data(id_, cy)
+                self.decide_object_count(object_data, cx, cy)
 
-            if self.debug:
-                cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), thickness=2)
-                cv2.circle(frame, (cx, cy), 5, (255, 0, 0), cv2.FILLED)
-                cv2.putText(frame, f'{id_}-{object_data.get("direction")}', (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
-                            (255, 0, 0), 2)
+                if self.debug:
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), thickness=2)
+                    cv2.circle(frame, (cx, cy), 5, (255, 0, 0), cv2.FILLED)
+                    cv2.putText(frame, f'{id_}-{object_data.get("direction")}', (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 0.5,
+                                (255, 0, 0), 2)
 
     def set_object_data(self, id_: int, cy: int):
         object_data = self.objects_data.get(id_)
@@ -106,15 +105,18 @@ class VideoProcessor:
 
     def decide_object_count(self, object_data: dict, cx, cy):
         object_data_direction = object_data.get("direction")
-        if not object_data.get("counted"):
-            if object_data_direction == "in":
-                if self.location.LIMITS_IN[0].x < cx < self.location.LIMITS_IN[1].x and self.location.LIMITS_IN[0].y - 15 < cy < self.location.LIMITS_IN[1].y + 15:
-                    self.count_in += 1
-                    object_data.update({"counted": True})
-            elif object_data_direction == "out":
-                if self.location.LIMITS_OUT[0].x < cx < self.location.LIMITS_OUT[1].x and self.location.LIMITS_OUT[0].y - 15 < cy < self.location.LIMITS_OUT[1].y + 15:
-                    self.count_out += 1
-                    object_data.update({"counted": True})
+        id_ = object_data.get("id_")
+
+        if object_data_direction == "in":
+            if self.location.LIMITS_IN[0].x < cx < self.location.LIMITS_IN[1].x and self.location.LIMITS_IN[0].y - 15 < cy < self.location.LIMITS_IN[1].y + 15:
+                self.count_in += 1
+                self.counted_ids.append(id_)
+                # del self.objects_data[id_]
+        elif object_data_direction == "out":
+            if self.location.LIMITS_OUT[0].x < cx < self.location.LIMITS_OUT[1].x and self.location.LIMITS_OUT[0].y - 15 < cy < self.location.LIMITS_OUT[1].y + 15:
+                self.count_out += 1
+                self.counted_ids.append(id_)
+                # del self.objects_data[id_]
 
     def show_and_draw(self, frame):
         cv2.rectangle(frame, (self.location.MASK_P1.x, self.location.MASK_P1.y), (self.location.MASK_P2.x, self.location.MASK_P2.y), (255, 0, 255), thickness=2)
