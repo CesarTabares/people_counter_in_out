@@ -40,7 +40,7 @@ class VideoProcessor:
             self.process_detected_objects(frame, results_tracker)
 
             if self.debug:
-                self.show_and_draw(frame)
+                self.show_and_draw_frame_limits(frame)
                 key = cv2.waitKey(1)
                 if key == 27:
                     break
@@ -118,7 +118,7 @@ class VideoProcessor:
                 self.counted_ids.append(id_)
                 del self.objects_data[id_]
 
-    def show_and_draw(self, frame):
+    def show_and_draw_frame_limits(self, frame):
         cv2.rectangle(frame, (self.location.MASK_P1.x, self.location.MASK_P1.y), (self.location.MASK_P2.x, self.location.MASK_P2.y), (255, 0, 255), thickness=2)
         cv2.line(frame, (self.location.LIMITS_IN[0].x, self.location.LIMITS_IN[0].y), (self.location.LIMITS_IN[1].x, self.location.LIMITS_IN[1].y), (0, 255, 0), thickness=2)
         cv2.line(frame, (self.location.LIMITS_OUT[0].x, self.location.LIMITS_OUT[0].y), (self.location.LIMITS_OUT[1].x, self.location.LIMITS_OUT[1].y), (0, 0, 255), thickness=2)
