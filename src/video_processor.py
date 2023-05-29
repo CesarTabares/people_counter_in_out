@@ -12,7 +12,7 @@ from ultralytics import YOLO
 class VideoProcessor:
 
     OBJECTS_OF_INTERESTS = ["person"]
-    CONFIDENCE_LEVEL = 0.3
+    CONFIDENCE_LEVEL = 0.1
 
     def __init__(self, location: LocationBase, publisher, debug: bool = False):
         self.location = location
@@ -124,4 +124,11 @@ class VideoProcessor:
         cv2.line(frame, (self.location.LIMITS_OUT[0].x, self.location.LIMITS_OUT[0].y), (self.location.LIMITS_OUT[1].x, self.location.LIMITS_OUT[1].y), (0, 0, 255), thickness=2)
         cv2.putText(frame, f"IN: {self.count_in}", (10, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 255), 3)
         cv2.putText(frame, f"OUT: {self.count_out}", (100, 30), cv2.FONT_HERSHEY_PLAIN, 2, (0, 255, 255), 3)
+        cv2.namedWindow(self.location.__class__.__name__)
+        cv2.setMouseCallback(self.location.__class__.__name__, self.click_event)
         cv2.imshow(self.location.__class__.__name__, frame)
+
+    @staticmethod
+    def click_event(event, x, y, flags, params):
+        if event == cv2.EVENT_LBUTTONDOWN:
+            print(f'({x},{y})')
