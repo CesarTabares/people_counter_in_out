@@ -2,7 +2,7 @@ from src.locations.base import LocationBase
 
 
 class MayorcaLocation(LocationBase):
-    VIDEO_URL = "http://2.tcp.ngrok.io:13642/stream"
+    VIDEO_URL = "http://192.168.0.136:81/stream"
     MASK_P1 = LocationBase.Point(24, 51)
     MASK_P2 = LocationBase.Point(770, 561)
     LIMITS_IN = [LocationBase.Point(24, 151), LocationBase.Point(760, 151)]
