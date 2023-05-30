@@ -34,7 +34,7 @@ class VideoProcessor:
                 break
             self.location.build_mask()
             frame_region = self.get_frame_region(frame)
-            results = self.model(frame_region, stream=True, device="mps", verbose=False)
+            results = self.model(frame_region, stream=True, device="cpu", verbose=False) #mps for mac
             detections = self.add_detections(results)
             results_tracker = self.tracker.update(dets=detections)
             self.process_detected_objects(frame, results_tracker)
